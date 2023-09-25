@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.firesign.ui.profile_screen.ProfileScreen
 import com.example.firesign.ui.sign_in.FireAuthUIClient
 import com.example.firesign.ui.sign_in.SignInScreen
 import com.example.firesign.ui.sign_in.SignInViewModel
@@ -51,7 +52,26 @@ class MainActivity : ComponentActivity() {
                         composable(route = "sign-in") {
                             val viewModel = viewModel<SignInViewModel>()
                             val state = viewModel.state.collectAsState()
+                            
+                            /*
+                            * If signed-in user exists,then go to profile screen.
+                            * */
+                            /*
+                            LaunchedEffect(key1 = Unit) {
+                                if (fireClient.getSignedInUser() != null) {
+                                    navController.navigate("profile")
+                                }
+                            }
 
+                             */
+
+                            /*
+                            * Register an activity for a result.
+                            * The intended activity is Google sign-in flow.
+                            * The IntentSender is returned by method `signIn()` of fireClient.
+                            * The IntentSenderRequest will be constructed from this IntentSender.
+                            * The resulting Intent has Google credentials which are handled in `signInWithIntent()` of fireClient.
+                            * */
                             val launcher = rememberLauncherForActivityResult(
                                 contract = ActivityResultContracts.StartIntentSenderForResult(),
                                 onResult = { result ->
@@ -66,13 +86,21 @@ class MainActivity : ComponentActivity() {
                                 }  // end ON RESULT
                             )  // end LAUNCHER
 
+
+                            /*
+                            * Show toast when user signs in.
+                            * */
                             LaunchedEffect(key1 = state.value.isSignInSuccessful) {
                                 Toast.makeText(
                                     applicationContext,
                                     "Signed in user!",
                                     Toast.LENGTH_SHORT
                                 ).show()
+
+                                navController.navigate("profile")
+                                viewModel.resetSignInState()
                             }
+
                             SignInScreen(
                                 signInState = state.value,
                                 onSignInClick = {
@@ -86,6 +114,22 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }  //  end COMPOSABLE SIGN-IN
+                        composable("profile") {
+                            ProfileScreen(
+                                userData = fireClient.getSignedInUser(),
+                                onSignOut = {
+                                    lifecycleScope.launch {
+                                        fireClient.signOut()
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Signed out!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                        navController.popBackStack()
+                                    }
+                                })
+                        }
                     }  // end NAV HOST
                 }  // end SURFACE
             }  // end FIRESIGN THEME

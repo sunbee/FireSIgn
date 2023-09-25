@@ -25,7 +25,7 @@ import com.example.firesign.ui.sign_in.UserData
 
 @Composable
 fun ProfileScreen(
-    userData: UserData,
+    userData: UserData?,
     onSignOut: () -> Unit
 ) {
     Column(
@@ -35,7 +35,7 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (userData.profilePictureUrl != null) {
+        if (userData?.profilePictureUrl != null) {
             AsyncImage(
                 model = userData.profilePictureUrl,
                 contentDescription = "Profile Pic",
@@ -45,7 +45,7 @@ fun ProfileScreen(
                     .clip(CircleShape))
             Spacer(modifier = Modifier.height(16.dp))
         }
-        if (userData.username != null) {
+        if (userData?.username != null) {
             Text(
                 text = userData.username,
                 textAlign = TextAlign.Center,
@@ -55,13 +55,13 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
         Text(
-            text = userData.userId,
+            text = userData?.userId ?: "Found No Google User!",
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold)
-        Spacer(modifier = )
+        Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = onSignOut) {
-            
+            Text(text="Sign Out")
         }
     }
     
