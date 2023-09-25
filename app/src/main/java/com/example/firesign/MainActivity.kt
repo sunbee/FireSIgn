@@ -56,14 +56,11 @@ class MainActivity : ComponentActivity() {
                             /*
                             * If signed-in user exists,then go to profile screen.
                             * */
-                            /*
                             LaunchedEffect(key1 = Unit) {
                                 if (fireClient.getSignedInUser() != null) {
                                     navController.navigate("profile")
                                 }
                             }
-
-                             */
 
                             /*
                             * Register an activity for a result.
@@ -91,14 +88,16 @@ class MainActivity : ComponentActivity() {
                             * Show toast when user signs in.
                             * */
                             LaunchedEffect(key1 = state.value.isSignInSuccessful) {
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Signed in user!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                if (state.value.isSignInSuccessful) {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Signed in user!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
 
-                                navController.navigate("profile")
-                                viewModel.resetSignInState()
+                                    navController.navigate("profile")
+                                    viewModel.resetSignInState()
+                                }
                             }
 
                             SignInScreen(
